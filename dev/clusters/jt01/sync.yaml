@@ -6,8 +6,6 @@ spec:
   interval: 1m
   retryInterval: 3m
   timeout: 5m
-  dependsOn:
-    - name: controllers
   sourceRef:
     kind: GitRepository
     name: flux-system
