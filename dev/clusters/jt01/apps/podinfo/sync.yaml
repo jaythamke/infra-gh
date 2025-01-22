@@ -1,0 +1,22 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: preconfigs-sync--podinfo
+spec:
+  interval: 1m
+  retryInterval: 3m
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: deploy-cluster--${cluster_name}
+  path: ./${cluster_family}/clusters/${cluster_name}/preconfigs
+  prune: true
+  wait: true
+  postBuild:
+    substitute:
+      component_name: podinfo
+      cluster_name: ${cluster_name}
+      target_cluster_kubeconfig_secret: ${target_cluster_kubeconfig_secret}
+      target_cluster_kubeconfig_secret_key: ${target_cluster_kubeconfig_secret_key}

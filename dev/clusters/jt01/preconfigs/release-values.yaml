@@ -1,0 +1,9 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: preconfigs--${component_name}
+spec:
+  kubeConfig:
+    secretRef:
+      name: ${target_cluster_kubeconfig_secret}
+      key: ${target_cluster_kubeconfig_secret_key}

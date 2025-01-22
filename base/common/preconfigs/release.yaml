@@ -1,0 +1,22 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: preconfigs--${component_name}
+spec:
+  interval: 1m
+  releaseName: preconfigs--${component_name}
+  chart:
+    spec:
+      chart: ./tools/charts/generic
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+  install:
+    createNamespace: true
+  storageNamespace: ${cluster_name}--${component_name}
+  targetNamespace: ${cluster_name}--${component_name}
+  valuesFrom:
+    - kind: ConfigMap
+      name: preconfigs--${component_name}
+      valuesKey: ${component_name}.yaml

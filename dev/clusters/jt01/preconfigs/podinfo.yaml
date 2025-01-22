@@ -1,0 +1,7 @@
+resources:
+  - apiVersion: v1
+    data:
+      GALAXY: Milky Way
+    kind: ConfigMap
+    metadata:
+      name: galaxy

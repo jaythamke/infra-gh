@@ -1,0 +1,27 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: apps
+spec:
+  interval: 1m
+  retryInterval: 3m
+  timeout: 5m
+  dependsOn:
+    - name: controllers
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: deploy-cluster--jt01
+  path: ./dev/clusters/jt01/apps
+  prune: true
+  wait: true
+  postBuild:
+    substitute:
+      cluster_name: jt01
+      cluster_family: dev
+      target_cluster_kubeconfig_secret: jt01-kubeconfig
+      target_cluster_kubeconfig_secret_key: kubeconfig.yaml
+    substituteFrom:
+      - kind: ConfigMap
+        name: chart-versions

@@ -1,0 +1,4 @@
+{{- range .Values.resources }}
+---
+{{ toYaml . | indent 0 }}
+{{- end }}

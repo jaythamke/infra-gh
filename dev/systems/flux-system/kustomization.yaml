@@ -1,0 +1,73 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - gotk-components.yaml
+  - gotk-sync.yaml
+patches:
+  - target:
+      kind: Deployment
+      name: "helm-controller"
+    patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: "--concurrent=16"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          limits:
+            cpu: 2
+            memory: 1Gi
+          requests:
+            cpu: 500m
+            memory: 768Mi
+  - target:
+      kind: Deployment
+      name: "kustomize-controller"
+    patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: "--concurrent=16"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          limits:
+            cpu: 300m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 140Mi
+  - target:
+      kind: Deployment
+      name: "notification-controller"
+    patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: "--concurrent=16"
+  - target:
+      kind: Deployment
+      name: "source-controller"
+    patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: "--concurrent=2"
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: "--max-retry-delay=1m"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          limits:
+            cpu: 2
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 128Mi
+  - target:
+      kind: Kustomization
+      name: flux-system
+    patch: |-
+      - op: add
+        path: /spec/postBuild
+        value:
+          substitute:
+            cluster_family: dev
